@@ -1,0 +1,38 @@
+<!-- 2048 Game HTML with title, score area, restart button, and 4x4 game container -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>2048 Game</title>
+</head>
+<body>
+  <header id="page-header">
+    <h1>2048</h1>
+    <div id="theme-control">
+      <label for="theme-select">Theme</label>
+      <select id="theme-select">
+        <option value="classic">Classic</option>
+        <option value="dark">Dark</option>
+        <option value="ocean">Ocean</option>
+        <option value="pastel">Pastel</option>
+      </select>
+    </div>
+  </header>
+  <div id="board-wrapper">
+    <div id="game-container"></div>
+    <div id="game-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-message" hidden>
+      <p id="overlay-message"></p>
+      <button id="overlay-action-button" type="button"></button>
+    </div>
+  </div>
+  <div id="score-area">
+    <div>Score: <span id="score">0</span></div>
+    <div>Best: <span id="best-score">0</span></div>
+    <button id="restart-button">Restart</button>
+  </div>
+  <p id="message" aria-live="polite"></p>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

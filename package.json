@@ -1,0 +1,15 @@
+{
+  "name": "2048",
+  "version": "1.0.0",
+  "description": "",
+  "main": "board.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "vitest": "^5.0.5"
+  }
+}
