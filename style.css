@@ -3,6 +3,7 @@
 }
 
 :root {
+  --board-size: 410px;
   color-scheme: light;
   --page-bg: #faf8ef;
   --text: #776e65;
@@ -105,6 +106,7 @@ body {
   min-height: 100vh;
   margin: 0;
   display: grid;
+  grid-template-columns: var(--board-size);
   place-content: center;
   gap: 16px;
   padding: 24px;
@@ -155,7 +157,7 @@ button:focus-visible {
 }
 
 #game-container {
-  --cell-size: 90px;
+  --cell-size: calc((var(--board-size) - 50px) / 4);
   --cell-gap: 10px;
   position: relative;
   display: grid;
@@ -302,11 +304,32 @@ button:focus-visible {
 }
 
 #score-area {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
   align-items: center;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: bold;
+}
+
+#score-area > div {
+  min-width: 0;
+}
+
+#score,
+#best-score {
+  display: block;
+  height: 30px;
+  line-height: 30px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: min(24px, calc(var(--board-size) * 0.44 / var(--score-digits, 1)));
+}
+
+#message {
+  min-height: 2.5em;
+  margin: 0;
+  font-size: 14px;
 }
 
 #restart-button,
@@ -326,9 +349,26 @@ button:focus-visible {
   background: var(--button-hover);
 }
 
-@media (max-width: 450px) {
-  #game-container {
-    --cell-size: 70px;
+@media (max-width: 450px), (pointer: coarse) {
+  :root {
+    --board-size: min(330px, calc(100vw - 32px), calc(100dvh - 220px));
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    height: 100dvh;
+    min-height: 0;
+    padding: 16px;
+    gap: 12px;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: pinch-zoom;
+  }
+
+  h1 {
+    font-size: 40px;
   }
 
   .cell {
@@ -340,5 +380,34 @@ button:focus-visible {
   .tile-new,
   .tile-merged {
     animation: none;
+  }
+
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px) and (max-height: 500px) {
+  :root {
+    --board-size: min(330px, calc(100dvh - 32px), calc(100vw - 244px));
+  }
+
+  body {
+    grid-template-columns: 180px var(--board-size);
+    column-gap: 24px;
+  }
+
+  #page-header {
+    flex-wrap: wrap;
+  }
+
+  #board-wrapper {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+
+  #score-area {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #restart-button {
+    grid-column: 1 / -1;
   }
 }

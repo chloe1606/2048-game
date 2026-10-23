@@ -80,6 +80,7 @@ function updateBestScore() {
   }
 
   bestScoreElement.textContent = bestScore;
+  bestScoreElement.style.setProperty('--score-digits', String(bestScore).length);
 }
 
 function updateMessage() {
@@ -143,6 +144,7 @@ function createTile(row, col, value, appear = false) {
 
 function updateGameState() {
   scoreElement.textContent = score;
+  scoreElement.style.setProperty('--score-digits', String(score).length);
   updateBestScore();
   updateMessage();
   saveGame();
