@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# macOS metadata
+.DS_Store
+._*
+.AppleDouble/
+.LSOverride
+
+# Local editor and tooling settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cache/
+.netlify/
+.vercel/
+.wrangler/
+
+# Local environment files (keep shareable examples)
+.env
+.env.*
+!.env.example
+
+# Logs and generated test reports
+*.log
+coverage/
