@@ -259,13 +259,31 @@ h1 {
 }
 
 #theme-select {
-  border: 1px solid var(--board-bg);
-  border-radius: 4px;
-  padding: 8px 10px;
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+  border-radius: 9px;
+  padding: 9px 36px 9px 12px;
   background: var(--control-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23776e65' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 7.5 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
   color: var(--text);
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+#theme-select:hover {
+  border-color: var(--button-bg);
+  box-shadow: 0 3px 9px rgb(0 0 0 / 12%);
+}
+
+#theme-select:focus-visible {
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--button-bg) 25%, transparent);
 }
 
 #theme-select:focus-visible,
@@ -455,20 +473,120 @@ button:focus-visible {
 }
 
 #restart-button,
+#undo-button,
 #overlay-action-button {
   border: 0;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 10px 16px;
   background: var(--button-bg);
   color: var(--button-text);
   font: inherit;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-#restart-button:hover,
+#game-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#restart-button,
+#undo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  border-radius: 999px;
+}
+
+#restart-button {
+  background: linear-gradient(135deg, var(--button-hover), var(--button-bg) 65%);
+  box-shadow: 0 3px 0 var(--button-hover), 0 5px 12px rgb(0 0 0 / 14%);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+#restart-button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--button-hover), 0 7px 14px rgb(0 0 0 / 18%);
+}
+
+#restart-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--button-hover);
+}
+
+#restart-button svg,
+#undo-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+#undo-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#undo-button:hover:not(:disabled),
 #overlay-action-button:hover {
   background: var(--button-hover);
+}
+
+dialog#restart-dialog {
+  width: min(360px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--board-bg);
+  border-radius: 12px;
+  background: var(--page-bg);
+  color: var(--text);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 24%);
+}
+
+dialog#restart-dialog::backdrop {
+  background: rgb(0 0 0 / 48%);
+  backdrop-filter: blur(2px);
+}
+
+#restart-dialog h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+#restart-dialog p {
+  margin: 10px 0 22px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+#cancel-restart-button,
+#confirm-restart-button {
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#cancel-restart-button {
+  background: var(--control-bg);
+  color: var(--text);
+}
+
+#confirm-restart-button {
+  background: var(--button-bg);
+  color: var(--button-text);
 }
 
 @media (max-width: 450px), (pointer: coarse) {
@@ -493,8 +611,68 @@ button:focus-visible {
     font-size: 40px;
   }
 
+  #page-header {
+    gap: 8px;
+  }
+
+  #game-actions {
+    gap: 6px;
+  }
+
+  #restart-button,
+  #undo-button {
+    gap: 5px;
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+
   .cell {
     font-size: 24px;
+  }
+}
+
+@media (max-width: 560px), (pointer: coarse) {
+  #page-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+
+  #page-header h1 {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 40px;
+  }
+
+  #theme-control {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  #theme-select {
+    max-width: 100%;
+  }
+
+  #game-actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 360px) {
+  #restart-button .button-label,
+  #undo-button .button-label {
+    display: none;
+  }
+
+  #restart-button,
+  #undo-button {
+    width: 44px;
+    height: 44px;
+    padding: 8px;
   }
 }
 
@@ -523,6 +701,7 @@ button:focus-visible {
   }
 
   #page-header {
+    display: flex;
     flex-wrap: wrap;
   }
 
@@ -535,7 +714,4 @@ button:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  #restart-button {
-    grid-column: 1 / -1;
-  }
 }

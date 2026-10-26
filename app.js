@@ -25,7 +25,17 @@ function loadSavedGame() {
       Number.isInteger(savedGame.score) &&
       savedGame.score >= 0
     ) {
-      return savedGame;
+      const undoState = savedGame.undoState;
+      return {
+        ...savedGame,
+        undoState: undoState &&
+          isValidBoard(undoState.board) &&
+          Number.isInteger(undoState.score) &&
+          undoState.score >= 0 &&
+          typeof undoState.winAcknowledged === 'boolean'
+          ? undoState
+          : null
+      };
     }
   } catch {
     // A missing or invalid saved game simply starts a new game.
@@ -35,7 +45,7 @@ function loadSavedGame() {
 }
 
 function saveGame() {
-  localStorage.setItem(SAVED_GAME_KEY, JSON.stringify({ board, score }));
+  localStorage.setItem(SAVED_GAME_KEY, JSON.stringify({ board, score, undoState }));
 }
 
 const savedGame = loadSavedGame();
@@ -43,9 +53,12 @@ let board = savedGame?.board ?? createNewGame();
 let score = savedGame?.score ?? 0;
 let bestScore = Number(localStorage.getItem('2048-best-score')) || 0;
 let winAcknowledged = false;
+let undoState = savedGame?.undoState ?? null;
 
 const gameContainer = document.querySelector('#game-container');
 const restartButton = document.querySelector('#restart-button');
+const undoButton = document.querySelector('#undo-button');
+const restartDialog = document.querySelector('#restart-dialog');
 const scoreElement = document.querySelector('#score');
 const bestScoreElement = document.querySelector('#best-score');
 const message = document.querySelector('#message');
@@ -145,6 +158,7 @@ function createTile(row, col, value, appear = false) {
 function updateGameState() {
   scoreElement.textContent = score;
   scoreElement.style.setProperty('--score-digits', String(score).length);
+  undoButton.disabled = moving || !undoState;
   updateBestScore();
   updateMessage();
   saveGame();
@@ -170,14 +184,34 @@ function startNewGame() {
   board = createNewGame();
   score = 0;
   winAcknowledged = false;
+  undoState = null;
   renderBoard();
 }
 
-restartButton.addEventListener('click', startNewGame);
+function undoMove() {
+  if (moving || !undoState) {
+    return;
+  }
+
+  board = undoState.board;
+  score = undoState.score;
+  winAcknowledged = undoState.winAcknowledged;
+  undoState = null;
+  renderBoard();
+}
+
+restartButton.addEventListener('click', () => restartDialog.showModal());
+undoButton.addEventListener('click', undoMove);
+
+restartDialog.addEventListener('close', () => {
+  if (restartDialog.returnValue === 'restart') {
+    startNewGame();
+  }
+});
 
 overlayActionButton.addEventListener('click', () => {
   if (isGameOver(board)) {
-    startNewGame();
+    restartDialog.showModal();
   } else {
     winAcknowledged = true;
     updateMessage();
@@ -185,7 +219,7 @@ overlayActionButton.addEventListener('click', () => {
 });
 
 async function playMove(direction) {
-  if (!gameOverlay.hidden) {
+  if (!gameOverlay.hidden || restartDialog.open) {
     return;
   }
   if (moving) {
@@ -202,6 +236,12 @@ async function playMove(direction) {
   }
 
   moving = true;
+  undoState = {
+    board: board.map(row => [...row]),
+    score,
+    winAcknowledged
+  };
+  undoButton.disabled = true;
   const version = gameVersion;
   const nextTiles = new Map();
   const consumedTiles = [];

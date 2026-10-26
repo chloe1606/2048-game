@@ -10,7 +10,16 @@
 <body>
   <header id="page-header">
     <h1>2048</h1>
-    <button id="restart-button" type="button">Restart</button>
+    <div id="game-actions">
+      <button id="undo-button" type="button" aria-label="Undo last move" title="Undo last move" disabled>
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h9a7 7 0 0 1 0 14h-2"/></svg>
+        <span class="button-label">Undo</span>
+      </button>
+      <button id="restart-button" type="button" aria-label="Restart game">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 7v5h-5M20 12a8 8 0 1 1-2.34-5.66L20 9"/></svg>
+        <span class="button-label">Restart</span>
+      </button>
+    </div>
     <div id="theme-control">
       <label for="theme-select">Theme</label>
       <select id="theme-select">
@@ -33,6 +42,16 @@
       <button id="overlay-action-button" type="button"></button>
     </div>
   </div>
+  <dialog id="restart-dialog" aria-labelledby="restart-dialog-title" aria-describedby="restart-dialog-description">
+    <form method="dialog">
+      <h2 id="restart-dialog-title">Start a new game?</h2>
+      <p id="restart-dialog-description">Your current game will be replaced.</p>
+      <div class="dialog-actions">
+        <button id="cancel-restart-button" type="submit" value="cancel" autofocus>Keep playing</button>
+        <button id="confirm-restart-button" type="submit" value="restart">Restart</button>
+      </div>
+    </form>
+  </dialog>
   <div id="score-area">
     <div>Score: <span id="score">0</span></div>
     <div>Best: <span id="best-score">0</span></div>
