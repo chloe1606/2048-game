@@ -158,7 +158,7 @@ function createTile(row, col, value, appear = false) {
 function updateGameState() {
   scoreElement.textContent = score;
   scoreElement.style.setProperty('--score-digits', String(score).length);
-  undoButton.disabled = moving || !undoState;
+  undoButton.disabled = !undoState;
   updateBestScore();
   updateMessage();
   saveGame();
@@ -175,12 +175,16 @@ function renderBoard() {
   updateGameState();
 }
 
-function startNewGame() {
+function finishActiveMove() {
   gameVersion++;
   activeAnimations.forEach(animation => animation.finish());
   activeAnimations = [];
   moving = false;
   pendingDirection = null;
+}
+
+function startNewGame() {
+  finishActiveMove();
   board = createNewGame();
   score = 0;
   winAcknowledged = false;
@@ -189,10 +193,11 @@ function startNewGame() {
 }
 
 function undoMove() {
-  if (moving || !undoState) {
+  if (!undoState) {
     return;
   }
 
+  finishActiveMove();
   board = undoState.board;
   score = undoState.score;
   winAcknowledged = undoState.winAcknowledged;
@@ -241,7 +246,7 @@ async function playMove(direction) {
     score,
     winAcknowledged
   };
-  undoButton.disabled = true;
+  undoButton.disabled = false;
   const version = gameVersion;
   const nextTiles = new Map();
   const consumedTiles = [];
