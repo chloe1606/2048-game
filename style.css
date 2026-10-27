@@ -520,6 +520,8 @@ button:focus-visible {
 
 #restart-button svg,
 #undo-button svg {
+  display: block;
+  flex: 0 0 18px;
   width: 18px;
   height: 18px;
   fill: none;
